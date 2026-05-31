@@ -758,9 +758,70 @@ a:hover {
 }
 
 .page-transition {
-    animation: fadeIn 0.4s ease-out;
+    animation: fadeIn 0.45s ease-out;
     position: relative;
     z-index: 1;
+}
+
+/* ---- AOS & micro-interactions ---- */
+[data-aos] {
+    will-change: transform, opacity;
+}
+
+.glass-card,
+.card,
+.metric-card,
+.upload-zone,
+.history-card,
+.timeline-content,
+.class-card-item {
+    transition:
+        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        border-color 0.35s ease,
+        box-shadow 0.35s ease,
+        background 0.35s ease;
+}
+
+.navbar .nav-link {
+    transition: color 0.25s ease, opacity 0.25s ease;
+}
+
+.btn-primary,
+.btn-outline-glass,
+.cta-button {
+    transition:
+        transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+        box-shadow 0.3s ease,
+        background 0.3s ease,
+        border-color 0.3s ease;
+}
+
+.btn-primary:active,
+.btn-outline-glass:active,
+.cta-button:active {
+    transform: translateY(0) scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    .page-transition {
+        animation: none;
+    }
+
+    [data-aos] {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .animate-in {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
 }
 
 /* ---- Scrollbar ---- */

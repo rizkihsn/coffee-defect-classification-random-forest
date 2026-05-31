@@ -295,7 +295,7 @@
 {% block content %}
 <section class="dash-section">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header" data-aos="fade-down">
             <div class="section-badge"><i class="bi bi-cpu"></i> AI Classifier</div>
             <h2>Klasifikasi Biji Kopi</h2>
             <p>Upload gambar biji kopi dan biarkan AI mengidentifikasi jenis cacat</p>
@@ -303,7 +303,7 @@
 
         <div class="classifier-grid">
             <!-- Left: Upload -->
-            <div class="upload-panel">
+            <div class="upload-panel" data-aos="fade-right" data-aos-duration="700">
                 <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
                     <span class="upload-icon"><i class="bi bi-cloud-arrow-up"></i></span>
                     <div><strong style="font-size:1.05rem;">Klik atau drag & drop gambar</strong></div>
@@ -325,7 +325,7 @@
             </div>
 
             <!-- Right: Results -->
-            <div class="result-panel">
+            <div class="result-panel" data-aos="fade-left" data-aos-duration="700">
                 <div class="predict-loader" id="predictLoader">
                     <div class="coffee-loader"></div>
                     <p><i class="bi bi-cpu"></i> Menganalisis gambar...</p>
@@ -376,16 +376,16 @@
         </div>
 
         <!-- Model Stats -->
-        <div class="model-stats-row" id="modelStatsRow"></div>
+        <div class="model-stats-row" id="modelStatsRow" data-aos="fade-up" data-aos-delay="100"></div>
 
         <!-- History -->
-        <div class="history-section" id="historySection" style="display:none;">
+        <div class="history-section" id="historySection" style="display:none;" data-aos="fade-up">
             <h4><i class="bi bi-clock-history"></i> Riwayat Prediksi</h4>
             <div class="history-grid" id="historyGrid"></div>
         </div>
 
         <!-- How it works -->
-        <div class="how-card animate-in">
+        <div class="how-card" data-aos="fade-up" data-aos-delay="150">
             <h4><i class="bi bi-info-circle"></i> Cara Kerja Sistem</h4>
             <div class="row">
                 <div class="col-md-6">
@@ -445,13 +445,14 @@
             { icon: 'bi-collection', label: 'Classes', value: modelData.n_classes },
             { icon: 'bi-columns-gap', label: 'Features', value: modelData.n_features }
         ];
-        document.getElementById('modelStatsRow').innerHTML = stats.map(s => `
-        <div class="metric-card">
+        document.getElementById('modelStatsRow').innerHTML = stats.map((s, i) => `
+        <div class="metric-card" data-aos="zoom-in" data-aos-delay="${i * 80}">
             <div class="metric-icon"><i class="bi ${s.icon}"></i></div>
             <div class="metric-value">${s.value}</div>
             <div class="metric-label">${s.label}</div>
         </div>
     `).join('');
+        if (typeof refreshAOS === 'function') refreshAOS();
     }
 
     function setupUpload() {

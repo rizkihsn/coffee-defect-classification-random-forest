@@ -161,7 +161,7 @@
 {% block content %}
 <section class="analytics-section">
     <div class="container">
-        <div class="section-header">
+        <div class="section-header" data-aos="fade-down">
             <div class="section-badge"><i class="bi bi-bar-chart-line"></i> Model Analytics</div>
             <h2>Statistik & Evaluasi Model</h2>
             <p>Analisis detail performa algoritma Random Forest untuk klasifikasi cacat biji kopi</p>
@@ -169,22 +169,22 @@
 
         <!-- Metric Summary Strip -->
         <div class="metric-strip" id="metricStrip">
-            <div class="metric-card">
+            <div class="metric-card" data-aos="zoom-in" data-aos-delay="0">
                 <div class="metric-icon"><i class="bi bi-bullseye"></i></div>
                 <div class="metric-value" id="valAccuracy">-</div>
                 <div class="metric-label">Test Accuracy</div>
             </div>
-            <div class="metric-card">
+            <div class="metric-card" data-aos="zoom-in" data-aos-delay="80">
                 <div class="metric-icon"><i class="bi bi-patch-check"></i></div>
                 <div class="metric-value" id="valF1">-</div>
                 <div class="metric-label">Weighted F1-Score</div>
             </div>
-            <div class="metric-card">
+            <div class="metric-card" data-aos="zoom-in" data-aos-delay="160">
                 <div class="metric-icon"><i class="bi bi-tree"></i></div>
                 <div class="metric-value" id="valTrees">200</div>
                 <div class="metric-label">Decision Trees</div>
             </div>
-            <div class="metric-card">
+            <div class="metric-card" data-aos="zoom-in" data-aos-delay="240">
                 <div class="metric-icon"><i class="bi bi-images"></i></div>
                 <div class="metric-value" id="valSamples">-</div>
                 <div class="metric-label">Total Dataset</div>
@@ -195,7 +195,7 @@
             <!-- Left Side: Visualizations -->
             <div>
                 <!-- Feature Importance Chart -->
-                <div class="chart-container">
+                <div class="chart-container" data-aos="fade-up" data-aos-delay="0">
                     <div class="chart-header">
                         <div>
                             <div class="chart-title">Feature Importance Analysis</div>
@@ -209,7 +209,7 @@
                 </div>
 
                 <!-- Confusion Matrix Visual -->
-                <div class="chart-container">
+                <div class="chart-container" data-aos="fade-up" data-aos-delay="120">
                     <div class="chart-header">
                         <div>
                             <div class="chart-title">Confusion Matrix Heatmap</div>
@@ -246,7 +246,7 @@
             <!-- Right Side: Feature Groups & Per-Class Performance -->
             <div>
                 <!-- Feature Importance Groups -->
-                <div class="chart-container">
+                <div class="chart-container" data-aos="fade-left" data-aos-delay="0">
                     <div class="chart-header">
                         <div>
                             <div class="chart-title">Feature Groups Contribution</div>
@@ -259,7 +259,7 @@
                 </div>
 
                 <!-- Per-Class Metrics -->
-                <div class="chart-container" style="max-height: 480px; overflow-y: auto;">
+                <div class="chart-container" style="max-height: 480px; overflow-y: auto;" data-aos="fade-left" data-aos-delay="120">
                     <div class="chart-header">
                         <div>
                             <div class="chart-title">Classification Report</div>
@@ -295,6 +295,7 @@
         await drawFeatureImportance();
         await drawConfusionMatrix();
         await drawClassReport();
+        if (typeof refreshAOS === 'function') refreshAOS();
     });
 
     async function loadModelDetails() {

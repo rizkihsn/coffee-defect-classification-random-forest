@@ -78,14 +78,14 @@
 {% block content %}
 <section class="about-section">
     <div class="container">
-        <div class="section-header animate-in">
+        <div class="section-header" data-aos="fade-down">
             <div class="section-badge"><i class="bi bi-info-circle"></i> About Project</div>
             <h2>Latar Belakang & Metodologi</h2>
             <p>Implementasi AI untuk klasifikasi cacat biji kopi guna menaikkan standar mutu industri agrikultur</p>
         </div>
 
-        <div class="row g-4 align-items-center mb-5 animate-in">
-            <div class="col-lg-6">
+        <div class="row g-4 align-items-center mb-5">
+            <div class="col-lg-6" data-aos="fade-right">
                 <h3 class="text-accent mb-3">Studi Kasus & Tujuan</h3>
                 <p class="text-secondary">
                     Biji kopi hijau berkualitas tinggi merupakan prasyarat utama untuk menghasilkan minuman kopi bercitarasa premium. Namun, proses klasifikasi cacat biji kopi secara manual memerlukan waktu lama dan sangat tergantung pada keahlian visual manusia yang subjektif.
@@ -99,7 +99,7 @@
                     Tujuan utamanya adalah menyediakan sistem klasifikasi cacat biji kopi otomatis yang cepat, akurat, dan transparan, yang dapat mendeteksi hingga 17 jenis cacat biji kopi berdasarkan standar ekspor/SCA menggunakan dataset resmi Kaggle.
                 </p>
             </div>
-            <div class="col-lg-6">
+            <div class="col-lg-6" data-aos="fade-left">
                 <div class="glass-card">
                     <div class="card-body">
                         <h4 style="color: var(--accent);" class="mb-3">Tugas Akademik AI</h4>
@@ -114,8 +114,8 @@
             </div>
         </div>
 
-        <div class="timeline animate-in">
-            <div class="timeline-item">
+        <div class="timeline">
+            <div class="timeline-item" data-aos="fade-up" data-aos-delay="0">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
                     <h5 class="text-accent">1. Data Preprocessing</h5>
@@ -124,7 +124,7 @@
                     </p>
                 </div>
             </div>
-            <div class="timeline-item">
+            <div class="timeline-item" data-aos="fade-up" data-aos-delay="100">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
                     <h5 class="text-accent">2. Feature Extraction</h5>
@@ -133,7 +133,7 @@
                     </p>
                 </div>
             </div>
-            <div class="timeline-item">
+            <div class="timeline-item" data-aos="fade-up" data-aos-delay="200">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
                     <h5 class="text-accent">3. Random Forest Training</h5>
@@ -142,7 +142,7 @@
                     </p>
                 </div>
             </div>
-            <div class="timeline-item">
+            <div class="timeline-item" data-aos="fade-up" data-aos-delay="300">
                 <div class="timeline-marker"></div>
                 <div class="timeline-content">
                     <h5 class="text-accent">4. Real-time Deployment</h5>
@@ -154,11 +154,11 @@
         </div>
 
         <!-- Class Showcase -->
-        <div class="mt-5 animate-in">
-            <h3 class="text-center text-accent mb-2">17 Kelas Cacat Biji Kopi Hijau</h3>
-            <p class="text-center text-secondary small">Sistem ini mengenali seluruh daftar cacat fisik kopi hijau</p>
+        <div class="mt-5">
+            <h3 class="text-center text-accent mb-2" data-aos="fade-up">17 Kelas Cacat Biji Kopi Hijau</h3>
+            <p class="text-center text-secondary small" data-aos="fade-up" data-aos-delay="80">Sistem ini mengenali seluruh daftar cacat fisik kopi hijau</p>
             
-            <div class="class-grid-showcase">
+            <div class="class-grid-showcase" data-aos="fade-up" data-aos-delay="150">
                 <div class="class-card-item">
                     <i class="bi bi-box-seam"></i>
                     <span>Broken</span>

@@ -94,9 +94,31 @@ function initCounterAnimations() {
     document.querySelectorAll('.stat-number-anim').forEach(el => observer.observe(el));
 }
 
+// AOS (Animate On Scroll)
+function initAOS() {
+    if (typeof AOS === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    AOS.init({
+        duration: 650,
+        easing: 'ease-out-cubic',
+        once: true,
+        offset: 48,
+        delay: 0,
+        anchorPlacement: 'top-bottom',
+    });
+}
+
+function refreshAOS() {
+    if (typeof AOS !== 'undefined' && typeof AOS.refresh === 'function') {
+        AOS.refresh();
+    }
+}
+
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
     checkModelStatus();
+    initAOS();
     initScrollAnimations();
     initCounterAnimations();
 });

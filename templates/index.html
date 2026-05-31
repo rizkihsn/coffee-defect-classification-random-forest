@@ -24,7 +24,6 @@
         z-index: 10;
         text-align: left;
         max-width: 720px;
-        animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .hero h1 {
@@ -98,33 +97,8 @@
         border-radius: 12px;
         padding: 2rem;
         text-align: center;
-        transition: all 0.3s ease;
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
-        animation: fadeIn 0.6s ease-out forwards;
-    }
-
-    .feature-card:nth-child(1) {
-        animation-delay: 0.1s;
-    }
-
-    .feature-card:nth-child(2) {
-        animation-delay: 0.2s;
-    }
-
-    .feature-card:nth-child(3) {
-        animation-delay: 0.3s;
-    }
-
-    .feature-card:nth-child(4) {
-        animation-delay: 0.4s;
-    }
-
-    .feature-card:nth-child(5) {
-        animation-delay: 0.5s;
-    }
-
-    .feature-card:nth-child(6) {
-        animation-delay: 0.6s;
     }
 
     .feature-card:hover {
@@ -260,20 +234,20 @@
 <!-- Hero Section -->
 <section class="hero">
     <div class="hero-content">
-        <div class="hero-badge"
+        <div class="hero-badge" data-aos="fade-down" data-aos-duration="500"
             style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(212,175,55,0.15); border: 1px solid rgba(212,175,55,0.3); padding: 0.5rem 1.25rem; border-radius: 50px; color: var(--accent); font-weight: 600; font-size: 0.85rem; margin-bottom: 1.5rem;">
             <span
                 style="width: 8px; height: 8px; background: var(--accent); border-radius: 50%; display: inline-block; box-shadow: 0 0 8px var(--accent); animation: pulse 2s infinite;"></span>
             <span>COFFEE DEFECT CLASSIFICATION SYSTEM</span>
         </div>
-        <h1>Memproses Mutu,<br>
+        <h1 data-aos="fade-up" data-aos-delay="100">Memproses Mutu,<br>
             <span class="text-gradient">Menjamin Cita Rasa</span>
         </h1>
-        <p class="lead">
+        <p class="lead" data-aos="fade-up" data-aos-delay="200">
             Deteksi mutu fisik dan klasifikasi cacat biji kopi hijau secara instan
             menggunakan algoritma <strong>Random Forest</strong> berbasis visi komputer.
         </p>
-        <div class="cta-buttons">
+        <div class="cta-buttons" data-aos="fade-up" data-aos-delay="300">
             <a href="/dashboard" class="btn btn-primary cta-button"
                 style="box-shadow: 0 4px 15px rgba(212,175,55,0.3);">
                 <i class="bi bi-magic"></i> Mulai Klasifikasi
@@ -288,43 +262,43 @@
 <!-- Features Section -->
 <section class="features" id="features">
     <div class="container">
-        <h2 class="text-center">Why Choose Our AI?</h2>
-        <p class="text-center text-secondary" style="font-size: 1.1rem; margin-bottom: 3rem;">
+        <h2 class="text-center" data-aos="fade-up">Why Choose Our AI?</h2>
+        <p class="text-center text-secondary" style="font-size: 1.1rem; margin-bottom: 3rem;" data-aos="fade-up" data-aos-delay="80">
             Powered by cutting-edge machine learning and computer vision
         </p>
 
         <div class="feature-grid">
-            <div class="feature-card animate-in">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="0">
                 <div class="feature-icon"><i class="bi bi-lightning-charge"></i></div>
                 <h4>Lightning Fast</h4>
                 <p>Get predictions in milliseconds with optimized Random Forest</p>
             </div>
 
-            <div class="feature-card animate-in">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="80">
                 <div class="feature-icon"><i class="bi bi-collection"></i></div>
                 <h4>17 Defect Classes</h4>
                 <p>Identify all types of coffee bean defects and issues</p>
             </div>
 
-            <div class="feature-card animate-in">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="160">
                 <div class="feature-icon"><i class="bi bi-shield-check"></i></div>
                 <h4>99% Confident</h4>
                 <p>See probability distribution across all classifications</p>
             </div>
 
-            <div class="feature-card animate-in">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="240">
                 <div class="feature-icon"><i class="bi bi-cloud-upload"></i></div>
                 <h4>Easy Upload</h4>
                 <p>Drag & drop or select images for instant analysis</p>
             </div>
 
-            <div class="feature-card animate-in">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="320">
                 <div class="feature-icon"><i class="bi bi-graph-up"></i></div>
                 <h4>Real-time Metrics</h4>
                 <p>View detailed statistics and model performance</p>
             </div>
 
-            <div class="feature-card animate-in">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
                 <div class="feature-icon"><i class="bi bi-shield-lock"></i></div>
                 <h4>Secure & Private</h4>
                 <p>All processing happens on secure servers</p>
@@ -337,26 +311,26 @@
 <section class="stats">
     <div class="container">
         <div class="row">
-            <div class="col-md-3 col-sm-6">
-                <div class="stat-item animate-in">
+            <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="0">
+                <div class="stat-item">
                     <div class="stat-number stat-number-anim" data-target="95" data-suffix="%+">0%+</div>
                     <div class="stat-label">Accuracy</div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="stat-item animate-in">
+            <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="100">
+                <div class="stat-item">
                     <div class="stat-number stat-number-anim" data-target="17" data-suffix="">0</div>
                     <div class="stat-label">Defect Classes</div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="stat-item animate-in">
+            <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="200">
+                <div class="stat-item">
                     <div class="stat-number stat-number-anim" data-target="200" data-suffix="+">0+</div>
                     <div class="stat-label">Training Samples</div>
                 </div>
             </div>
-            <div class="col-md-3 col-sm-6">
-                <div class="stat-item animate-in">
+            <div class="col-md-3 col-sm-6" data-aos="zoom-in" data-aos-delay="300">
+                <div class="stat-item">
                     <div class="stat-number stat-number-anim" data-target="100" data-prefix="<" data-suffix="ms">0ms
                     </div>
                     <div class="stat-label">Response Time</div>
@@ -370,9 +344,9 @@
 <!-- About Technologies -->
 <section style="padding: 4rem 0; background: var(--bg-secondary);">
     <div class="container">
-        <h2 class="text-center mb-4">Technologies Used</h2>
+        <h2 class="text-center mb-4" data-aos="fade-up">Technologies Used</h2>
         <div class="row g-4">
-            <div class="col-md-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="0">
                 <div class="card text-center">
                     <div class="card-body">
                         <h5 style="color: var(--accent); margin-bottom: 1rem;">
@@ -385,7 +359,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="120">
                 <div class="card text-center">
                     <div class="card-body">
                         <h5 style="color: var(--accent); margin-bottom: 1rem;">
@@ -398,7 +372,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-4" data-aos="fade-up" data-aos-delay="240">
                 <div class="card text-center">
                     <div class="card-body">
                         <h5 style="color: var(--accent); margin-bottom: 1rem;">
