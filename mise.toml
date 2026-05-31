@@ -1,0 +1,4 @@
+# Railway Railpack uses mise to install Python.
+# Disable GitHub attestation check (required for some Python builds on Railway).
+[settings.python]
+github_attestations = false
