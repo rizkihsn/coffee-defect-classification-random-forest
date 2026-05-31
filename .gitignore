@@ -44,6 +44,9 @@ env/
 # ==============================
 # Project-specific
 # ==============================
+# Dokumen lokal (jurnal, draft) — tidak di-push ke GitHub
+docs/
+
 # Dataset training (besar; unduh/latih ulang di lokal)
 archive/
 
