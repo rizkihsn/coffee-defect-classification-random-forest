@@ -74,7 +74,7 @@ coffe/
 ├── predict.py                  # Standalone CLI untuk testing prediksi gambar tunggal
 ├── requirements.txt            # Daftar dependensi modul python 3.12+
 ├── runtime.txt                 # Spesifikasi versi Python untuk cloud deployment
-└── vercel.json                 # Konfigurasi deploy Vercel
+└── Procfile                    # Instruksi eksekusi untuk web server production (Gunicorn)
 ```
 
 ---
@@ -123,11 +123,6 @@ Jalankan perintah berikut untuk menginstal semua modul python (kompatibel penuh 
 pip install -r requirements.txt
 ```
 
-Untuk melatih ulang model (butuh matplotlib, pandas, dll.):
-```bash
-pip install -r requirements-train.txt
-```
-
 ### 4. Melatih Model (Training Model)
 Jika Anda ingin melatih ulang model menggunakan dataset yang ada di folder `./archive`:
 ```bash
@@ -159,20 +154,22 @@ Output terminal akan memunculkan:
 
 ---
 
-## ☁️ Deployment ke Platform Cloud (Render / Heroku)
+## ☁️ Deployment ke Railway
 
-Proyek ini telah dikonfigurasi untuk langsung di-deploy ke **Render** atau **Heroku** dengan langkah mudah:
+Proyek ini dikonfigurasi untuk deploy ke **[Railway](https://railway.app)** (cocok untuk Flask + ML, tanpa batas bundle seperti serverless Vercel):
 
-1. **Unggah Proyek ke GitHub**: Buat repositori baru di GitHub dan lakukan commit serta push repositori lokal Anda.
-2. **Koneksikan ke Render**:
-   * Masuk ke dashboard Render, lalu pilih **New Web Service**.
-   * Hubungkan repositori GitHub proyek ini.
-   * Konfigurasikan pengaturan berikut:
-     * **Environment**: `Python`
-     * **Build Command**: `pip install -r requirements.txt`
-     * **Start Command**: `gunicorn app:app`
-     * **Plan**: Pilih Free (atau berbayar jika butuh memori lebih besar).
-3. **Selesai!** Render akan otomatis membangun aplikasi Anda sesuai instruksi di berkas `Procfile` dan `runtime.txt`.
+1. **Push ke GitHub** — pastikan repo sudah terhubung (mis. `coffee-defect-classification-random-forest`).
+2. **Buat project di Railway**:
+   * Login [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo**.
+   * Pilih repositori proyek ini.
+3. **Railway akan otomatis**:
+   * Mendeteksi Python dari `runtime.txt` / `requirements.txt`.
+   * Menjalankan build: `pip install -r requirements.txt`.
+   * Start dari `Procfile`: `gunicorn app:app`.
+4. **Generate domain**: di service → **Settings** → **Networking** → **Generate Domain**.
+5. Buka URL publik Railway Anda — aplikasi siap digunakan.
+
+> **Catatan:** Model `models/coffee_defect_model.pkl` sudah ada di repo; tidak perlu training ulang di server kecuali Anda menambahkan dataset `archive/` sendiri.
 
 ---
 

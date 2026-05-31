@@ -32,8 +32,7 @@ CORS(app)
 
 app.config['SECRET_KEY'] = 'coffee-defect-classifier-secret-key-2024'
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
-# Vercel: filesystem read-only kecuali /tmp
-app.config['UPLOAD_FOLDER'] = '/tmp/uploads' if os.environ.get('VERCEL') else 'uploads'
+app.config['UPLOAD_FOLDER'] = 'uploads'
 
 # Ensure folders exist
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
