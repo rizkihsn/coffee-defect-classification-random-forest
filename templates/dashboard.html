@@ -1,0 +1,567 @@
+{% extends "base.html" %}
+{% block title %}Classifier - CoffeeDefect AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .dash-section {
+        padding: 3rem 0 5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .classifier-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        margin-top: 2rem;
+    }
+
+    /* Upload */
+    .upload-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    #fileInput {
+        display: none;
+    }
+
+    .image-preview-box {
+        width: 100%;
+        min-height: 280px;
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .image-preview-box img {
+        max-width: 100%;
+        max-height: 350px;
+        object-fit: contain;
+        animation: fadeInUp 0.4s ease-out;
+    }
+
+    .image-preview-box.empty {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    .image-info {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        padding: 0.75rem;
+        background: var(--bg-tertiary);
+        border-radius: var(--radius-sm);
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+    }
+
+    .info-chip {
+        padding: 0.2rem 0.6rem;
+        background: rgba(212, 175, 55, 0.1);
+        border-radius: 4px;
+        color: var(--accent);
+        font-weight: 500;
+    }
+
+    /* Result Panel */
+    .result-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .result-card {
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        display: none;
+    }
+
+    .result-card.show {
+        display: block;
+        animation: fadeInUp 0.5s ease-out;
+    }
+
+    .result-class {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: var(--accent);
+        margin-bottom: 0.75rem;
+        line-height: 1.2;
+    }
+
+    .result-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .result-badge {
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+    .result-badge.high {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .result-badge.medium {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+    }
+
+    .result-badge.low {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+    }
+
+    .confidence-section {
+        margin: 1.5rem 0;
+    }
+
+    .confidence-label {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .confidence-label .conf-value {
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 700;
+        color: var(--accent);
+        font-size: 1.1rem;
+    }
+
+    .top-preds-title {
+        font-size: 0.85rem;
+        color: var(--text-tertiary);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-bottom: 0.75rem;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--glass-border);
+    }
+
+    /* Loader */
+    .predict-loader {
+        display: none;
+        text-align: center;
+        padding: 3rem;
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+    }
+
+    .predict-loader.active {
+        display: block;
+    }
+
+    .predict-loader .coffee-loader {
+        margin: 0 auto 1rem;
+    }
+
+    .predict-loader p {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+    }
+
+    /* Empty state */
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: var(--text-secondary);
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+    }
+
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        display: block;
+        opacity: 0.7;
+        color: var(--accent);
+    }
+
+    /* Stats row */
+    .model-stats-row {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    /* History */
+    .history-section {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--glass-border);
+    }
+
+    .history-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .history-card {
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-sm);
+        padding: 0.75rem;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .history-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-3px);
+    }
+
+    .history-card img {
+        width: 100%;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+    }
+
+    .history-card .h-class {
+        font-size: 0.78rem;
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .history-card .h-conf {
+        font-size: 0.72rem;
+        color: var(--text-tertiary);
+    }
+
+    /* How it works */
+    .how-card {
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: 2rem;
+        margin-top: 3rem;
+    }
+
+    .how-card h4 {
+        color: var(--accent);
+        margin-bottom: 1.5rem;
+    }
+
+    @media (max-width: 968px) {
+        .classifier-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .model-stats-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .model-stats-row {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .result-class {
+            font-size: 1.8rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="dash-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-badge"><i class="bi bi-cpu"></i> AI Classifier</div>
+            <h2>Klasifikasi Biji Kopi</h2>
+            <p>Upload gambar biji kopi dan biarkan AI mengidentifikasi jenis cacat</p>
+        </div>
+
+        <div class="classifier-grid">
+            <!-- Left: Upload -->
+            <div class="upload-panel">
+                <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
+                    <span class="upload-icon"><i class="bi bi-cloud-arrow-up"></i></span>
+                    <div><strong style="font-size:1.05rem;">Klik atau drag & drop gambar</strong></div>
+                    <div style="color:var(--text-tertiary);font-size:0.85rem;margin-top:0.3rem;">
+                        PNG, JPG, BMP &mdash; Maks. 16MB
+                    </div>
+                </div>
+                <input type="file" id="fileInput" accept="image/*">
+
+                <div class="image-preview-box empty" id="imagePreview">
+                    <span><i class="bi bi-image" style="font-size:2rem;display:block;margin-bottom:0.5rem;"></i>Preview
+                        gambar akan muncul di sini</span>
+                </div>
+
+                <div class="image-info" id="imageInfo" style="display:none;">
+                    <span>File: <span class="info-chip" id="fileName">-</span></span>
+                    <span>Size: <span class="info-chip" id="fileSize">-</span></span>
+                </div>
+            </div>
+
+            <!-- Right: Results -->
+            <div class="result-panel">
+                <div class="predict-loader" id="predictLoader">
+                    <div class="coffee-loader"></div>
+                    <p><i class="bi bi-cpu"></i> Menganalisis gambar...</p>
+                    <div style="font-size:0.75rem;color:var(--text-tertiary);margin-top:0.5rem;">
+                        Preprocessing → Feature Extraction → Random Forest Predict
+                    </div>
+                </div>
+
+                <div class="result-card" id="resultCard">
+                    <div
+                        style="font-size:0.75rem;color:var(--text-tertiary);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.5rem;">
+                        PREDICTION RESULT
+                    </div>
+                    <div class="result-class" id="predictedClass">-</div>
+                    <div class="result-meta">
+                        <span class="result-badge" id="confBadge">-</span>
+                        <span style="font-size:0.8rem;color:var(--text-tertiary);" id="predTimestamp">-</span>
+                    </div>
+
+                    <div class="confidence-section">
+                        <div class="confidence-label">
+                            <span style="color:var(--text-secondary)">Confidence Score</span>
+                            <span class="conf-value" id="confValue">0%</span>
+                        </div>
+                        <div class="confidence-track">
+                            <div class="confidence-fill" id="confFill" style="width:0%"></div>
+                        </div>
+                    </div>
+
+                    <div class="top-preds-title">Top Predictions</div>
+                    <div id="topPreds"></div>
+
+                    <div style="margin-top:1.5rem;display:flex;gap:0.75rem;flex-wrap:wrap;">
+                        <button class="btn btn-primary btn-sm" onclick="document.getElementById('fileInput').click()">
+                            <i class="bi bi-upload"></i> Upload Lagi
+                        </button>
+                        <button class="btn btn-glass btn-sm" onclick="downloadResult()">
+                            <i class="bi bi-download"></i> Download Hasil
+                        </button>
+                    </div>
+                </div>
+
+                <div class="empty-state" id="emptyState">
+                    <i class="bi bi-inbox"></i>
+                    <p>Upload gambar untuk melihat hasil prediksi</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Stats -->
+        <div class="model-stats-row" id="modelStatsRow"></div>
+
+        <!-- History -->
+        <div class="history-section" id="historySection" style="display:none;">
+            <h4><i class="bi bi-clock-history"></i> Riwayat Prediksi</h4>
+            <div class="history-grid" id="historyGrid"></div>
+        </div>
+
+        <!-- How it works -->
+        <div class="how-card animate-in">
+            <h4><i class="bi bi-info-circle"></i> Cara Kerja Sistem</h4>
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 style="color:var(--accent);">Feature Extraction</h6>
+                    <ul style="color:var(--text-secondary);line-height:2;font-size:0.9rem;">
+                        <li><strong>HOG:</strong> Histogram of Oriented Gradients (324 fitur)</li>
+                        <li><strong>LBP:</strong> Local Binary Pattern (59 fitur)</li>
+                        <li><strong>Edge:</strong> Canny edge detection (33 fitur)</li>
+                        <li><strong>Morphological:</strong> Area, perimeter, circularity (3 fitur)</li>
+                        <li><strong>Color Histogram:</strong> Intensity distribution (32 fitur)</li>
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6 style="color:var(--accent);">Random Forest Classifier</h6>
+                    <ul style="color:var(--text-secondary);line-height:2;font-size:0.9rem;">
+                        <li><strong>Estimators:</strong> 200 decision trees</li>
+                        <li><strong>Max Depth:</strong> 30</li>
+                        <li><strong>Classes:</strong> 17 jenis cacat biji kopi</li>
+                        <li><strong>Total Features:</strong> ~451 dimensional vector</li>
+                        <li><strong>Class Weight:</strong> Balanced</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let modelData = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadModelInfo();
+        setupUpload();
+        await loadHistory();
+    });
+
+    async function loadModelInfo() {
+        try {
+            const res = await fetch('/api/model-info');
+            const data = await res.json();
+            if (data.status === 'success') {
+                modelData = data.data;
+                renderModelStats();
+            }
+        } catch (e) {
+            console.error('Model info error:', e);
+        }
+    }
+
+    function renderModelStats() {
+        if (!modelData) return;
+        const stats = [
+            { icon: 'bi-bullseye', label: 'Accuracy', value: modelData.accuracy + '%' },
+            { icon: 'bi-crosshair', label: 'Precision', value: modelData.precision + '%' },
+            { icon: 'bi-collection', label: 'Classes', value: modelData.n_classes },
+            { icon: 'bi-columns-gap', label: 'Features', value: modelData.n_features }
+        ];
+        document.getElementById('modelStatsRow').innerHTML = stats.map(s => `
+        <div class="metric-card">
+            <div class="metric-icon"><i class="bi ${s.icon}"></i></div>
+            <div class="metric-value">${s.value}</div>
+            <div class="metric-label">${s.label}</div>
+        </div>
+    `).join('');
+    }
+
+    function setupUpload() {
+        const zone = document.getElementById('uploadZone');
+        const input = document.getElementById('fileInput');
+        input.addEventListener('change', e => { if (e.target.files[0]) processFile(e.target.files[0]); });
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+        zone.addEventListener('dragleave', e => { e.preventDefault(); zone.classList.remove('drag-over'); });
+        zone.addEventListener('drop', e => {
+            e.preventDefault(); zone.classList.remove('drag-over');
+            if (e.dataTransfer.files.length) processFile(e.dataTransfer.files[0]);
+        });
+    }
+
+    async function processFile(file) {
+        if (!file.type.startsWith('image/')) { showToast('Pilih file gambar!', 'error'); return; }
+        if (file.size > 16 * 1024 * 1024) { showToast('Ukuran file maks 16MB!', 'error'); return; }
+
+        // Show info
+        document.getElementById('fileName').textContent = file.name;
+        document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(1) + ' KB';
+        document.getElementById('imageInfo').style.display = 'flex';
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const preview = document.getElementById('imagePreview');
+            preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+            preview.classList.remove('empty');
+            await sendPrediction(e.target.result);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function sendPrediction(imageData) {
+        document.getElementById('predictLoader').classList.add('active');
+        document.getElementById('resultCard').classList.remove('show');
+        document.getElementById('emptyState').style.display = 'none';
+
+        try {
+            const res = await fetch('/api/predict-batch', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image_data: imageData })
+            });
+            const result = await res.json();
+            if (result.status === 'success') {
+                displayResult(result.data.prediction, result.data.timestamp);
+                showToast('Prediksi berhasil!', 'success');
+                await loadHistory();
+            } else {
+                showToast('Error: ' + result.error, 'error');
+            }
+        } catch (e) {
+            showToast('Error: ' + e.message, 'error');
+        } finally {
+            document.getElementById('predictLoader').classList.remove('active');
+        }
+    }
+
+    function displayResult(pred, timestamp) {
+        document.getElementById('predictedClass').textContent = pred.predicted_class;
+        const conf = pred.confidence;
+        document.getElementById('confValue').textContent = conf.toFixed(1) + '%';
+
+        const badge = document.getElementById('confBadge');
+        badge.textContent = conf >= 80 ? 'High Confidence' : conf >= 50 ? 'Medium' : 'Low';
+        badge.className = 'result-badge ' + (conf >= 80 ? 'high' : conf >= 50 ? 'medium' : 'low');
+
+        document.getElementById('predTimestamp').textContent = new Date(timestamp).toLocaleString('id-ID');
+
+        const fill = document.getElementById('confFill');
+        fill.style.width = '0%';
+        setTimeout(() => fill.style.width = conf + '%', 50);
+
+        document.getElementById('topPreds').innerHTML = pred.top_predictions.map(p => `
+        <div class="prediction-row">
+            <span class="pred-name">${p.class}</span>
+            <span class="pred-score">${p.probability.toFixed(1)}%</span>
+        </div>
+    `).join('');
+
+        document.getElementById('resultCard').classList.add('show');
+    }
+
+    async function loadHistory() {
+        try {
+            const res = await fetch('/api/prediction-history');
+            const data = await res.json();
+            if (data.status === 'success' && data.data.length > 0) {
+                const grid = document.getElementById('historyGrid');
+                grid.innerHTML = data.data.reverse().map(item => `
+                <div class="history-card">
+                    ${item.preview ? `<img src="${item.preview}" alt="${item.predicted_class}">` : ''}
+                    <div class="h-class">${item.predicted_class}</div>
+                    <div class="h-conf">${Math.round(item.confidence)}%</div>
+                </div>
+            `).join('');
+                document.getElementById('historySection').style.display = 'block';
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    function downloadResult() {
+        const cls = document.getElementById('predictedClass').textContent;
+        const conf = document.getElementById('confValue').textContent;
+        const text = `Coffee Bean Defect Classification Result\n${'='.repeat(45)}\nPredicted Class: ${cls}\nConfidence: ${conf}\nTimestamp: ${new Date().toLocaleString()}\nModel: Random Forest (200 trees)\nFeatures: ~451 (HOG+LBP+Edge+Color+Morphological)`;
+        const el = document.createElement('a');
+        el.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+        el.setAttribute('download', 'coffee_classification_result.txt');
+        el.click();
+    }
+</script>
+{% endblock %}

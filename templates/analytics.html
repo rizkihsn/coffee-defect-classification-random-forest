@@ -1,0 +1,489 @@
+{% extends "base.html" %}
+{% block title %}Model Analytics - CoffeeDefect AI{% endblock %}
+
+{% block extra_css %}
+<style>
+    .analytics-section {
+        padding: 3rem 0 5rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .analytics-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .metric-strip {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
+
+    .chart-container {
+        background: var(--bg-card);
+        border: 1px solid var(--glass-border);
+        border-radius: var(--radius-lg);
+        padding: 1.75rem;
+        position: relative;
+        margin-bottom: 2rem;
+    }
+
+    .chart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .chart-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    .chart-subtitle {
+        font-size: 0.8rem;
+        color: var(--text-tertiary);
+    }
+
+    .matrix-container {
+        overflow-x: auto;
+        padding: 1rem 0;
+        width: 100%;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .confusion-matrix-table {
+        border-collapse: collapse;
+        margin: 0 auto;
+        font-size: 0.75rem;
+        font-family: 'JetBrains Mono', monospace;
+        min-width: 640px;
+        table-layout: fixed;
+    }
+
+    .confusion-matrix-table td,
+    .confusion-matrix-table th {
+        width: 32px;
+        height: 32px;
+        text-align: center;
+        padding: 0;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+    }
+
+    .confusion-matrix-table th {
+        font-weight: 600;
+        color: var(--text-secondary);
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .confusion-matrix-table th.vertical-label {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        padding: 0.5rem 0;
+    }
+
+    .cell-value {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-weight: 700;
+    }
+
+    .class-report-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.85rem;
+    }
+
+    .class-report-table th,
+    .class-report-table td {
+        padding: 0.75rem 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--glass-border);
+    }
+
+    .class-report-table th {
+        color: var(--text-secondary);
+        font-weight: 600;
+    }
+
+    .class-report-table tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+    }
+
+    .score-badge {
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-weight: 700;
+        font-family: 'JetBrains Mono', monospace;
+    }
+
+    .score-badge.high {
+        background: rgba(16, 185, 129, 0.15);
+        color: var(--success);
+    }
+
+    .score-badge.medium {
+        background: rgba(245, 158, 11, 0.15);
+        color: var(--warning);
+    }
+
+    .score-badge.low {
+        background: rgba(239, 68, 68, 0.15);
+        color: var(--danger);
+    }
+
+    @media (max-width: 992px) {
+        .analytics-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .metric-strip {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .metric-strip {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="analytics-section">
+    <div class="container">
+        <div class="section-header">
+            <div class="section-badge"><i class="bi bi-bar-chart-line"></i> Model Analytics</div>
+            <h2>Statistik & Evaluasi Model</h2>
+            <p>Analisis detail performa algoritma Random Forest untuk klasifikasi cacat biji kopi</p>
+        </div>
+
+        <!-- Metric Summary Strip -->
+        <div class="metric-strip" id="metricStrip">
+            <div class="metric-card">
+                <div class="metric-icon"><i class="bi bi-bullseye"></i></div>
+                <div class="metric-value" id="valAccuracy">-</div>
+                <div class="metric-label">Test Accuracy</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon"><i class="bi bi-patch-check"></i></div>
+                <div class="metric-value" id="valF1">-</div>
+                <div class="metric-label">Weighted F1-Score</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon"><i class="bi bi-tree"></i></div>
+                <div class="metric-value" id="valTrees">200</div>
+                <div class="metric-label">Decision Trees</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-icon"><i class="bi bi-images"></i></div>
+                <div class="metric-value" id="valSamples">-</div>
+                <div class="metric-label">Total Dataset</div>
+            </div>
+        </div>
+
+        <div class="analytics-grid">
+            <!-- Left Side: Visualizations -->
+            <div>
+                <!-- Feature Importance Chart -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">Feature Importance Analysis</div>
+                            <div class="chart-subtitle">Top 20 fitur paling berpengaruh dalam klasifikasi Random Forest
+                            </div>
+                        </div>
+                    </div>
+                    <div style="height: 320px; position: relative;">
+                        <canvas id="featureImportanceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Confusion Matrix Visual -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">Confusion Matrix Heatmap</div>
+                            <div class="chart-subtitle">Distribusi prediksi benar vs salah untuk 17 kelas cacat biji
+                                kopi</div>
+                        </div>
+                    </div>
+                    <div class="matrix-container">
+                        <table class="confusion-matrix-table" id="confusionMatrixTable">
+                            <!-- Populated dynamically via JS -->
+                        </table>
+                    </div>
+                    <div class="d-flex justify-content-center gap-3 mt-3"
+                        style="font-size: 0.8rem; color: var(--text-secondary);">
+                        <div class="d-flex align-items-center gap-1">
+                            <span
+                                style="display:inline-block;width:12px;height:12px;background:#0A0A0F;border:1px solid rgba(255,255,255,0.1)"></span>
+                            <span>0 Prediksi</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <span
+                                style="display:inline-block;width:12px;height:12px;background:rgba(212,175,55,0.3)"></span>
+                            <span>Prediksi Rendah</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <span
+                                style="display:inline-block;width:12px;height:12px;background:rgba(212,175,55,1)"></span>
+                            <span>Prediksi Tinggi (Akurat)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Feature Groups & Per-Class Performance -->
+            <div>
+                <!-- Feature Importance Groups -->
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">Feature Groups Contribution</div>
+                            <div class="chart-subtitle">Kontribusi kelompok fitur terhadap akurasi model</div>
+                        </div>
+                    </div>
+                    <div style="height: 220px; position: relative;">
+                        <canvas id="featureGroupsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Per-Class Metrics -->
+                <div class="chart-container" style="max-height: 480px; overflow-y: auto;">
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">Classification Report</div>
+                            <div class="chart-subtitle">Metrik performa detail per kelas cacat kopi</div>
+                        </div>
+                    </div>
+                    <table class="class-report-table">
+                        <thead>
+                            <tr>
+                                <th>Class</th>
+                                <th>Precision</th>
+                                <th>Recall</th>
+                                <th>F1-Score</th>
+                            </tr>
+                        </thead>
+                        <tbody id="classReportBody">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Include Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        await loadModelDetails();
+        await drawFeatureImportance();
+        await drawConfusionMatrix();
+        await drawClassReport();
+    });
+
+    async function loadModelDetails() {
+        try {
+            const res = await fetch('/api/model-info');
+            const data = await res.json();
+            if (data.status === 'success') {
+                const info = data.data;
+                document.getElementById('valAccuracy').textContent = info.accuracy.toFixed(1) + '%';
+                document.getElementById('valF1').textContent = info.f1_score.toFixed(1) + '%';
+                document.getElementById('valSamples').textContent = (info.n_training_samples + info.n_testing_samples);
+            }
+        } catch (e) {
+            console.error('Error loading model info:', e);
+        }
+    }
+
+    async function drawFeatureImportance() {
+        try {
+            const res = await fetch('/api/feature-importance');
+            const data = await res.json();
+            if (data.status === 'success') {
+                const topFeatures = data.data.top_features;
+                const groups = data.data.feature_groups;
+
+                // Draw Top 20 features chart
+                const ctx1 = document.getElementById('featureImportanceChart').getContext('2d');
+                new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: topFeatures.map(f => f.name),
+                        datasets: [{
+                            label: 'Feature Importance Score',
+                            data: topFeatures.map(f => f.importance),
+                            backgroundColor: 'rgba(212, 175, 55, 0.75)',
+                            borderColor: '#D4AF37',
+                            borderWidth: 1,
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        layout: {
+                            padding: {
+                                left: 15,
+                                right: 25,
+                                top: 10,
+                                bottom: 10
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return ` Score: ${context.parsed.x.toFixed(6)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { color: 'rgba(255,255,255,0.05)' },
+                                ticks: { color: '#B5B5C5', font: { family: 'JetBrains Mono', size: 9 } }
+                            },
+                            y: {
+                                grid: { display: false },
+                                ticks: { color: '#F0F0F5', font: { family: 'Plus Jakarta Sans', weight: '500', size: 10 } }
+                            }
+                        }
+                    }
+                });
+
+                // Draw Feature Groups Pie Chart
+                const ctx2 = document.getElementById('featureGroupsChart').getContext('2d');
+                new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(groups),
+                        datasets: [{
+                            data: Object.values(groups),
+                            backgroundColor: [
+                                '#8B6F47',
+                                '#D4AF37',
+                                '#A89968',
+                                '#3B82F6',
+                                '#10B981'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    color: '#F0F0F5',
+                                    font: { family: 'Plus Jakarta Sans', size: 10 },
+                                    padding: 12
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function (context) {
+                                        return ` ${context.label}: ${context.raw.toFixed(1)}%`;
+                                    }
+                                }
+                            }
+                        },
+                        cutout: '65%'
+                    }
+                });
+            }
+        } catch (e) {
+            console.error('Error in feature charts:', e);
+        }
+    }
+
+    async function drawConfusionMatrix() {
+        try {
+            const res = await fetch('/api/confusion-matrix');
+            const data = await res.json();
+            if (data.status === 'success') {
+                const matrix = data.data.matrix;
+                const labels = data.data.labels;
+                const table = document.getElementById('confusionMatrixTable');
+
+                // Render confusion matrix HTML style
+                let html = `<thead><tr><th></th>`;
+                labels.forEach(lbl => {
+                    html += `<th title="${lbl}">${lbl.slice(0, 3)}</th>`;
+                });
+                html += `</tr></thead><tbody>`;
+
+                matrix.forEach((row, i) => {
+                    html += `<tr><th class="vertical-label-parent" title="${labels[i]}">${labels[i].slice(0, 3)}</th>`;
+                    const maxInRow = Math.max(...row, 1);
+                    row.forEach((val, j) => {
+                        // Set color density based on cell value relative to row
+                        let alpha = val / maxInRow;
+                        let bg = 'transparent';
+                        let fg = '#9999AA';
+                        if (val > 0) {
+                            if (i === j) {
+                                bg = `rgba(212, 175, 55, ${0.15 + alpha * 0.75})`;
+                                fg = '#FFFFFF';
+                            } else {
+                                bg = `rgba(239, 68, 68, ${0.1 + alpha * 0.4})`;
+                                fg = '#EF4444';
+                            }
+                        }
+                        html += `<td style="background:${bg};color:${fg}" title="True: ${labels[i]}, Predicted: ${labels[j]}"><span class="cell-value">${val}</span></td>`;
+                    });
+                    html += `</tr>`;
+                });
+                html += `</tbody>`;
+                table.innerHTML = html;
+            }
+        } catch (e) {
+            console.error('Error drawing confusion matrix:', e);
+        }
+    }
+
+    async function drawClassReport() {
+        try {
+            const res = await fetch('/api/class-report');
+            const data = await res.json();
+            if (data.status === 'success') {
+                const report = data.data;
+                const tbody = document.getElementById('classReportBody');
+                tbody.innerHTML = report.map(r => {
+                    const getBadgeClass = (val) => val >= 90 ? 'high' : val >= 70 ? 'medium' : 'low';
+                    return `
+                    <tr>
+                        <td style="font-weight:600;color:var(--text-primary);">${r.class}</td>
+                        <td><span class="score-badge ${getBadgeClass(r.precision)}">${r.precision.toFixed(0)}%</span></td>
+                        <td><span class="score-badge ${getBadgeClass(r.recall)}">${r.recall.toFixed(0)}%</span></td>
+                        <td><span class="score-badge ${getBadgeClass(r.f1_score)}">${r.f1_score.toFixed(0)}%</span></td>
+                    </tr>
+                `;
+                }).join('');
+            }
+        } catch (e) {
+            console.error('Error drawing class report:', e);
+        }
+    }
+</script>
+{% endblock %}
