@@ -163,9 +163,9 @@ Proyek ini dikonfigurasi untuk deploy ke **[Railway](https://railway.app)** (coc
    * Login [railway.app](https://railway.app) → **New Project** → **Deploy from GitHub repo**.
    * Pilih repositori proyek ini.
 3. **Railway akan otomatis**:
-   * Mendeteksi Python dari `runtime.txt` / `requirements.txt`.
+   * Mendeteksi Python dari `.python-version` / `runtime.txt` (gunakan versi dengan binary precompiled, mis. `3.11.9`).
    * Menjalankan build: `pip install -r requirements.txt`.
-   * Start dari `Procfile`: `gunicorn app:app`.
+   * Start dari `Procfile`: `gunicorn app:app --bind 0.0.0.0:$PORT`.
 4. **Generate domain**: di service → **Settings** → **Networking** → **Generate Domain**.
 5. Buka URL publik Railway Anda — aplikasi siap digunakan.
 
