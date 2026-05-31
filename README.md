@@ -170,6 +170,8 @@ Proyek ini dikonfigurasi untuk deploy ke **[Railway](https://railway.app)** (coc
 5. Buka URL publik Railway Anda — aplikasi siap digunakan.
 
 > **Catatan:** Model `models/coffee_defect_model.pkl` sudah ada di repo; tidak perlu training ulang di server kecuali Anda menambahkan dataset `archive/` sendiri.
+>
+> Deploy server menggunakan `opencv-python-headless` (tanpa GUI) agar kompatibel dengan Linux/Railway.
 
 ---
 
