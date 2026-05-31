@@ -3,7 +3,10 @@
   "builds": [
     {
       "src": "app.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "excludeFiles": "{archive/**,train_model.py,predict.py,.venv/**,venv/**,**/__pycache__/**,*.pyc}"
+      }
     },
     {
       "src": "static/**",
@@ -19,5 +22,10 @@
       "src": "/(.*)",
       "dest": "app.py"
     }
-  ]
+  ],
+  "functions": {
+    "app.py": {
+      "maxDuration": 60
+    }
+  }
 }

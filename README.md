@@ -74,7 +74,7 @@ coffe/
 ├── predict.py                  # Standalone CLI untuk testing prediksi gambar tunggal
 ├── requirements.txt            # Daftar dependensi modul python 3.12+
 ├── runtime.txt                 # Spesifikasi versi Python untuk cloud deployment
-└── Procfile                    # Instruksi eksekusi untuk web server production (Gunicorn)
+└── vercel.json                 # Konfigurasi deploy Vercel
 ```
 
 ---
@@ -121,6 +121,11 @@ source .venv/bin/activate
 Jalankan perintah berikut untuk menginstal semua modul python (kompatibel penuh dengan Python 3.12+):
 ```bash
 pip install -r requirements.txt
+```
+
+Untuk melatih ulang model (butuh matplotlib, pandas, dll.):
+```bash
+pip install -r requirements-train.txt
 ```
 
 ### 4. Melatih Model (Training Model)
