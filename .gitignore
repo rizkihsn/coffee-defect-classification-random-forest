@@ -44,11 +44,6 @@ env/
 # ==============================
 # Project-specific
 # ==============================
-# Dokumen lokal (jurnal, draft) — tidak di-push ke GitHub
-docs/
-
-# Dataset training (besar; unduh/latih ulang di lokal)
-archive/
 
 # Gambar unggahan pengguna (sementara)
 uploads/*
@@ -108,9 +103,3 @@ logs/
 .ruff_cache/
 .dmypy.json
 dmypy.json
-
-# ==============================
-# ML / training artifacts (opsional)
-# ==============================
-# Hapus komentar baris di bawah jika model .pkl tidak ingin di-push (ukuran besar)
-# models/*.pkl
